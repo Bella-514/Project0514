@@ -44,7 +44,7 @@ training001 = image.sample(
 )
 
 # 設置圖示
-legend_dict1 = {
+legend_dict = {
     'zero': '#ff0004',
     'one': '#868686',
     'two':'#774b0a',
