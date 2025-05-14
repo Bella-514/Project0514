@@ -33,7 +33,7 @@ image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
 ndvi = image.normalizedDifference(["SR_B5", "SR_B4"]).rename("NDVI")
 
 # 取10000點
-training001 = my_img.sample(
+training001 = image.sample(
     **{
         'region': image.geometry(),  # 若不指定，則預設為影像my_image的幾何範圍。
         'scale': 10,
