@@ -43,6 +43,12 @@ training001 = image.sample(
     }
 )
 
+num_clusters = 10
+clusterer = ee.Clusterer.wekaKMeans(num_clusters).train(training001)
+
+# 應用分群器於影像
+result001 = image.cluster(clusterer)
+
 # 設置圖示
 legend_dict = {
     'zero': '#ff0004',
@@ -68,5 +74,5 @@ Map = geemap.Map(center=[24.08, 120.56], zoom=10)
 Map.addLayer(ndvi, {"min": 0, "max": 1, "palette": ["white", "green"]}, "NDVI")
 Map.addLayer(training001, {}, 'Training samples')
 Map.addLayer(result001, vis_params_001, 'Labelled clusters')
-Map.add_legend(title='Land Cover Type1', legend_dict = legend_dict1, position = 'bottomright')
+Map.add_legend(title='Land Cover Type', legend_dict = legend_dict, position = 'bottomright')
 Map.to_streamlit(height=600)
