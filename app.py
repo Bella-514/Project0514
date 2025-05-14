@@ -67,4 +67,6 @@ vis_params_001 = {'min': 0, 'max': 10, 'palette': palette}
 Map = geemap.Map(center=[24.08, 120.56], zoom=10)
 Map.addLayer(ndvi, {"min": 0, "max": 1, "palette": ["white", "green"]}, "NDVI")
 Map.addLayer(training001, {}, 'Training samples')
+Map.addLayer(result001, vis_params_001, 'Labelled clusters')
+Map.add_legend(title='Land Cover Type1', legend_dict = legend_dict1, position = 'bottomright')
 Map.to_streamlit(height=600)
