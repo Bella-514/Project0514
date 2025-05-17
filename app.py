@@ -24,13 +24,15 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 # 地理區域
 point = ee.Geometry.Point([120.56, 24.08])
 
-# 擷取 Landsat NDVI
+# 擷取 
 image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
     .filterBounds(point) \
     .filterDate("2021-01-01", "2022-01-01") \
-    .median()
+    .sort('CLOUDY_PIXEL_PERCENTAGE') \
+    .first() \
+    .select('B.*')
+vis_params = {'min':100, 'max': 3500, 'bands': ['B4', 'B3', 'B2']}
 
-ndvi = image.normalizedDifference(["SR_B5", "SR_B4"]).rename("NDVI")
 
 # 取10000點
 training001 = image.sample(
@@ -43,7 +45,7 @@ training001 = image.sample(
     }
 )
 
-num_clusters = 10
+num_clusters = 11
 clusterer = ee.Clusterer.wekaKMeans(num_clusters).train(training001)
 
 # 應用分群器於影像
@@ -71,8 +73,8 @@ vis_params_001 = {'min': 0, 'max': 10, 'palette': palette}
 
 # 顯示地圖
 Map = geemap.Map(center=[24.08, 120.56], zoom=10)
-Map.addLayer(ndvi, {"min": -1, "max": 1, "palette": ["blue", "white", "green"]}, "NDVI")
-Map.addLayer(training001, {}, 'Training samples')
-Map.addLayer(result001, vis_params_001, 'Labelled clusters')
-Map.add_legend(title='Land Cover Type', legend_dict = legend_dict, position = 'bottomright')
+left_layer = geemap.ee_tile_layer(image, vis_params, "Sentinel-2")
+right_layer = geemap.ee_tile_layer(result001, vis_params_001, "KMeans clustered land cover")
+Map.split_map(left_layer, right_layer)
+Map.add_legend(title='Land Cover Cluster (KMeans)', legend_dict=legend_dict, draggable=False, position='bottomright')
 Map.to_streamlit(height=600)
