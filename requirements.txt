@@ -1,5 +1,6 @@
+pandas
 streamlit
 earthengine-api
 geemap
 google-auth
-
+leafmap
