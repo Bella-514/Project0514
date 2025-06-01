@@ -5,7 +5,7 @@ import pandas as pd
 m = leafmap.Map(center=[-15, -60], zoom=3)
 
 # 南美洲國界 GeoJSON，可用 Natural Earth 或 GEE 導出
-regions = "south_america_countries.geojson"
+regions = "south_america.geojson"
 
 # 南美洲國家及首都位置資料 CSV 格式
 cities = "south_america_capitals.csv"  # 必需包含 `longitude`, `latitude`, `country` 欄位
