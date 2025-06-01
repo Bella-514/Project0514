@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # === 檢查檔案是否存在 ===
-geojson_path = "south_america.geojson"
+geojson_path = "custom.geo.json"
 csv_path = "south_america_capitals.csv"
 
 if not os.path.exists(geojson_path):
