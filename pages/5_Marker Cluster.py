@@ -44,7 +44,6 @@ m.add_points_from_xy(
     x="longitude",
     y="latitude",
     color_column="country",
-    icon_names=icon_list,
     spin=True,
     add_legend=True,
 )
