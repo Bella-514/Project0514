@@ -2,10 +2,6 @@ import ee
 import geemap
 import os
 
-# 認證與初始化 Earth Engine
-ee.Authenticate()
-ee.Initialize(project='ee-s1044013')
-
 # 取得南美洲國家邊界資料（從 LSIB 選取南美洲國家）
 south_america_countries = [
     "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador",
