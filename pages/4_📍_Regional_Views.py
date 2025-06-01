@@ -1,29 +1,43 @@
-import streamlit as st
-import ee
-import leafmap.foliumap as leafmap  # 注意這一行改成 foliumap
+my_point = ee.Geometry.BBox(-63.0, -15.0, -47.0, -2.0)
 
-st.set_page_config(layout="wide")
-st.title("📍 巴西土地利用：子區域檢視")
+my_img = (
+    ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+    .filterBounds(my_point)
+    .filterDate('2018-01-01', '2024-12-31')
+    .sort('CLOUDY_PIXEL_PERCENTAGE')
+    .first()
+    .select('B.*')
+)
 
-# 初始化 Earth Engine
-if not ee.data._initialized:
-    ee.Initialize()
+vis_params = {'min':100, 'max': 3500, 'bands': ['B11',  'B8',  'B3']}
 
-# 區域選擇
-regions = {
-    "亞馬遜州": ee.Geometry.BBox(-70, -5, -60, 0),
-    "聖保羅州": ee.Geometry.BBox(-48, -24, -45, -22),
-    "馬托格羅索州": ee.Geometry.BBox(-58, -15, -54, -12)
+
+my_Map.addLayer(my_img, vis_params, "Sentinel-2")
+my_Map
+
+my_lc = ee.Image('ESA/WorldCover/v200/2021')
+# ESA WorldCover 10m v200
+# https://developers.google.com/earth-engine/datasets/catalog/ESA_WorldCover_v100#bands
+
+classValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
+remapValues = ee.List.sequence(0, 10)
+label = 'lc'
+my_lc = my_lc.remap(classValues, remapValues, bandName='Map').rename(label).toByte()
+
+# ee.Image.remap() https://developers.google.com/earth-engine/apidocs/ee-image-remap#colab-python
+# ee.Iamge.rename() https://developers.google.com/earth-engine/apidocs/ee-image-rename
+# ee.Image.toByte() 把影像像素值轉換為unsigned 8-bit integer （即0~255） https://developers.google.com/earth-engine/apidocs/ee-image-tobyte
+
+geemap.get_info(my_lc)
+
+classVis = {
+  'min': 0,
+  'max': 10,
+  'palette': ['006400' ,'ffbb22', 'ffff4c', 'f096ff', 'fa0000', 'b4b4b4',
+            'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0']
 }
-region_name = st.selectbox("選擇區域", list(regions.keys()))
-region = regions[region_name]
 
-# 土地覆蓋資料
-dataset = ee.ImageCollection("MODIS/006/MCD12Q1").filterDate("2020-01-01", "2020-12-31").first()
-landcover = dataset.select("LC_Type1").clip(region)
 
-# 建立地圖
-m = leafmap.Map()
-m.add_ee_layer(landcover, {}, f"{region_name} 土地覆蓋 (2020)")
-m.add_ee_layer(region, {"color": "red"}, "選擇區域邊界")
-m.to_streamlit(width=1000, height=600)
+my_Map.addLayer(my_lc, classVis, "ESA WorldCover 10m v200")
+my_Map.add_legend(title='ESA Land Cover Type', builtin_legend='ESA_WorldCover')
+my_Map
