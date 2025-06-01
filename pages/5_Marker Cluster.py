@@ -1,44 +1,34 @@
 import leafmap
 import pandas as pd
-import geopandas as gpd
-import os
-import streamlit as st
 
 # 建立地圖並聚焦在南美洲
 m = leafmap.Map(center=[-15, -60], zoom=3)
 
-# 使用你的 GeoJSON 檔案
+# GeoJSON 國界檔案
 geojson_path = "custom.geo.json"
 
-# 檢查 GeoJSON 檔案是否存在
-if not os.path.exists(geojson_path):
-    st.error("❌ 找不到 custom.geo.json 檔案，請確認檔案路徑是否正確")
-else:
-    try:
-        regions = gpd.read_file(geojson_path)
-        m.add_geojson(regions, layer_name="South America Countries")
-    except Exception as e:
-        st.error(f"❌ 載入 GeoJSON 檔案失敗：{e}")
-
-# 首都位置 CSV（需包含 longitude, latitude, country 欄位）
+# 南美洲首都資料
 csv_path = "south_america_capitals.csv"
 
-if not os.path.exists(csv_path):
-    st.error("❌ 找不到 south_america_capitals.csv 檔案")
-else:
-    try:
-        cities = pd.read_csv(csv_path)
-        m.add_points_from_xy(
-            cities,
-            x="longitude",
-            y="latitude",
-            color_column="country",
-            icon_names=["flag", "map", "leaf", "globe"],
-            spin=True,
-            add_legend=True,
-        )
-    except Exception as e:
-        st.error(f"❌ 載入 CSV 點資料失敗：{e}")
+# 載入 CSV
+df = pd.read_csv(csv_path)
 
-# 顯示地圖
+# 加入國界圖層
+m.add_geojson(geojson_path, layer_name="South America Countries")
+
+# 擴充 icon_names 至足夠數量
+icon_list = ["flag", "map", "leaf", "globe", "star", "heart", "rocket", "car", "plane", "sun", "moon", "cloud", "camera"]
+
+# 加入首都點資料
+m.add_points_from_xy(
+    df,
+    x="longitude",
+    y="latitude",
+    color_column="country",
+    icon_names=icon_list,
+    spin=True,
+    add_legend=True,
+)
+
+# 顯示地圖（Streamlit 用）
 m.to_streamlit()
