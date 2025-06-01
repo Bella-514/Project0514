@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 400,
+    "message": "Encoded string is too large",
+    "status": "INVALID_ARGUMENT"
+  }
+}
