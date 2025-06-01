@@ -1,28 +1,40 @@
-import leafmap
+import leafmap.foliumap as leafmap  # 建議用 folium backend 相容性更佳
 import pandas as pd
+import os
 
-# 建立地圖並聚焦在南美洲
+# === 檢查檔案是否存在 ===
+geojson_path = "south_america.geojson"
+csv_path = "south_america_capitals.csv"
+
+if not os.path.exists(geojson_path):
+    raise FileNotFoundError(f"找不到 GeoJSON 檔案：{geojson_path}")
+
+if not os.path.exists(csv_path):
+    raise FileNotFoundError(f"找不到 CSV 檔案：{csv_path}")
+
+# === 載入 CSV ===
+cities = pd.read_csv(csv_path)
+
+required_columns = {"longitude", "latitude", "country"}
+if not required_columns.issubset(cities.columns):
+    raise ValueError(f"CSV 缺少必要欄位：{required_columns - set(cities.columns)}")
+
+# === 建立地圖 ===
 m = leafmap.Map(center=[-15, -60], zoom=3)
 
-# 南美洲國界 GeoJSON，可用 Natural Earth 或 GEE 導出
-regions = "south_america.geojson"
+# === 加入南美洲國界 ===
+m.add_geojson(geojson_path, layer_name="South America Countries")
 
-# 南美洲國家及首都位置資料 CSV 格式
-cities = "south_america_capitals.csv"  # 必需包含 `longitude`, `latitude`, `country` 欄位
-
-
-# 加入國界 GeoJSON
-m.add_geojson(regions, layer_name="South America Countries")
-
-# 標示各國首都
+# === 加入首都位置點 ===
 m.add_points_from_xy(
     cities,
     x="longitude",
     y="latitude",
-    color_column="country",  # 可依國家區分顏色
-    icon_names=["flag", "map", "leaf", "globe"],  # 可自由調整 icon
+    color_column="country",
+    icon_names=["flag", "map", "leaf", "globe"],
     spin=True,
     add_legend=True,
 )
 
-m.to_streamlit()  # 若在 Streamlit 中顯示，否則用 m.show()
+# === 顯示地圖 ===
+m.to_streamlit()  # 如果是在 Jupyter 可用 m.show()
