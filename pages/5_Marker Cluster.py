@@ -16,9 +16,6 @@ df = pd.read_csv(csv_path)
 # 加入國界圖層
 m.add_geojson(geojson_path, layer_name="South America Countries")
 
-# 擴充 icon_names 至足夠數量
-icon_list = ["flag", "map", "leaf", "globe", "star", "heart", "rocket", "car", "plane", "sun", "moon", "cloud", "camera"]
-
 # 加入首都點資料
 m.add_points_from_xy(
     df,
