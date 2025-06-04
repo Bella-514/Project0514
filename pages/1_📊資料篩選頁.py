@@ -2,6 +2,9 @@ import streamlit as st
 import ee
 import geemap
 
+# 初始化 GEE
+ee.Initialize(credentials)
+
 st.title("📊 子頁面：資料篩選")
 
 # 檢查是否有日期資訊
