@@ -4,14 +4,18 @@ import leafmap.foliumap as geemap
 import json
 
 
-# 初始化 Earth Engine（防呆處理）
-try:
-    ee.Initialize()
-except ee.EEException:
-    # 從 secrets 初始化（使用 Service Account 或 refresh token）
-    key_dict = json.loads(st.secrets["ee_service_account"])  # 如果你是用 service account
-    credentials = ee.ServiceAccountCredentials(email=key_dict["client_email"], key_data=key_dict)
-    ee.Initialize(credentials)
+
+# 從 Streamlit Secrets 讀取 GEE 服務帳戶金鑰 JSON
+service_account_info = st.secrets["GEE_SERVICE_ACCOUNT"]
+
+# 使用 google-auth 進行 GEE 授權
+credentials = service_account.Credentials.from_service_account_info(
+    service_account_info,
+    scopes=["https://www.googleapis.com/auth/earthengine"]
+)
+
+# 初始化 GEE
+ee.Initialize(credentials)
 
 st.title("📊 子頁面：2018–2020 森林火災資料")
 
