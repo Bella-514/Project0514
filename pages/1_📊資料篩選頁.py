@@ -1,9 +1,7 @@
 import streamlit as st
 import ee
-import leafmap.foliumap as geemap
-import json
-
-
+from google.oauth2 import service_account
+import geemap.foliumap as geemap
 
 # 從 Streamlit Secrets 讀取 GEE 服務帳戶金鑰 JSON
 service_account_info = st.secrets["GEE_SERVICE_ACCOUNT"]
@@ -16,6 +14,7 @@ credentials = service_account.Credentials.from_service_account_info(
 
 # 初始化 GEE
 ee.Initialize(credentials)
+
 
 st.title("📊 子頁面：2018–2020 森林火災資料")
 
