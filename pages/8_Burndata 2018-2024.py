@@ -19,7 +19,7 @@ latin_america_countries = [
 latin_america = countries.filter(ee.Filter.inList('name', latin_america_countries))
 
 # 4. 載入火災資料集 (2018–2024)
-dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1').filterDate('2018-01-01', '2024-12-31')
+dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1').filterDate('2018-01-01', '2018-12-31')
 fire_cover = dataset.select('BurnDate')
 maxBA = fire_cover.max()
 
@@ -43,5 +43,5 @@ layer_name = 'BurnDate (Latin America)'
 Map.addLayer(maxBA_latin, baVis, layer_name)
 
 # 8. 顯示地圖於 Streamlit
-st.title("FireCCI Burn Date (2018–2024) - Latin America Only")
+st.title("FireCCI Burn Date (2018) - Latin America Only")
 Map.to_streamlit()
