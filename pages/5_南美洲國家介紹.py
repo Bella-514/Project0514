@@ -5,8 +5,7 @@ import pandas as pd
 st.set_page_config(layout="wide")
 
 markdown = """
-A Streamlit map app exercise
-<https://geo3w.ncue.edu.tw/?Lang=zh-tw>
+中南美洲國家
 """
 
 st.sidebar.title("About")
