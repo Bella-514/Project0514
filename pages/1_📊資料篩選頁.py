@@ -4,12 +4,6 @@ import geemap
 
 st.title("📊 子頁面：資料篩選")
 
-# 初始化 Earth Engine
-try:
-    ee.Initialize()
-except Exception as e:
-    st.error(f"Earth Engine 初始化失敗: {e}")
-
 # 檢查是否有日期資訊
 if 'start_date' in st.session_state and 'end_date' in st.session_state:
     # 取得主頁選擇的日期
