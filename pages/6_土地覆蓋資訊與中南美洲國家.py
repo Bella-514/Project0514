@@ -9,12 +9,11 @@ if not ee.data._initialized:
 st.set_page_config(layout="wide")
 st.title("🌍 中南美洲：土地覆蓋 vs 國界（分割視圖）")
 
-# --- 建立地圖物件 ---
+# 建立地圖物件
 my_Map = geemap.Map()
 
-# --- 建立左圖：ESA WorldCover ---
+# --- 左圖：ESA WorldCover 2021 ---
 image_left = ee.Image('ESA/WorldCover/v200/2021')
-
 classValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
 remapValues = ee.List.sequence(0, 10)
 image_left = image_left.remap(classValues, remapValues, bandName='Map').rename('lc').toByte()
@@ -29,14 +28,20 @@ vis_params_left = {
 }
 left_layer = geemap.ee_tile_layer(image_left, vis_params_left, 'WorldCover')
 
-# --- 建立右圖：國界 GeoJSON 疊圖 (右圖為透明底圖，只加國界線) ---
-right_layer = geemap.GeoJSON("custom.geo.json", name="South America Borders").to_layer()
+# --- 右圖：建立透明背景 + 疊加 GeoJSON 國界 ---
+empty_image = ee.Image(0).visualize(**{'palette': ['ffffff00']})  # 完全透明
+right_layer = geemap.ee_tile_layer(empty_image, {}, 'Transparent Layer')
 
-# --- 設定分割地圖 ---
+# 中心設定於南美洲
 my_Map.centerObject(image_left.geometry(), 4)
+
+# 設定分割地圖
 my_Map.split_map(left_layer, right_layer)
 
-# --- 加入圖例 ---
+# 加入國界圖層
+my_Map.add_geojson("custom.geo.json", layer_name="South America Borders")
+
+# 加入圖例
 legend_dict = {
     'Tree cover': '006400',
     'Shrubland': 'ffbb22',
@@ -52,5 +57,5 @@ legend_dict = {
 }
 my_Map.add_legend(title='ESA WorldCover (2021)', legend_dict=legend_dict, position='bottomright')
 
-# --- 顯示地圖 ---
+# 顯示地圖
 my_Map.to_streamlit(height=650)
