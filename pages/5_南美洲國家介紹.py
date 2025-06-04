@@ -11,7 +11,7 @@ A Streamlit map app exercise
 
 st.sidebar.title("About")
 st.sidebar.info(markdown)
-logo = "https://www.google.com/url?sa=i&url=https%3A%2F%2Femojis.wiki%2Fglobe-showing-americas%2F&psig=AOvVaw3QH5482D5R-rDwJoVS8of4&ust=1749104124895000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOCZruWO140DFQAAAAAdAAAAABAE"
+logo = "https://freebiehive.com/wp-content/uploads/2024/05/Earth-Globe-Americas-Emoji-PNG-758x473.jpg"
 st.sidebar.image(logo)
 
 st.title("South America Marker Cluster")
