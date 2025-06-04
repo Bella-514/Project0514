@@ -6,7 +6,7 @@ st.title("📊 子頁面：資料篩選")
 # 檢查是否有日期資訊
 if 'start_date' in st.session_state and 'end_date' in st.session_state:
     # 讀取資料
-    df = pd.read_csv("sample_data.csv", parse_dates=['日期'])
+    df = pd.read_csv("2020fire_cover.csv", parse_dates=['日期'])
 
     # 取得篩選條件
     start = st.session_state['start_date']
