@@ -3,6 +3,7 @@ import ee
 import leafmap.foliumap as geemap
 import json
 
+
 # 初始化 Earth Engine（防呆處理）
 try:
     ee.Initialize()
