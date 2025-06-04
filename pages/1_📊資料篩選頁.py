@@ -3,7 +3,7 @@ import ee
 import geemap
 
 # 初始化 GEE
-ee.Initialize(credentials)
+ee.Initialize
 
 st.title("📊 子頁面：資料篩選")
 
