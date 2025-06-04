@@ -19,7 +19,7 @@ with st.expander("See source code"):
     with st.echo():
 
         # 建立地圖，南美洲中心座標
-        m = leafmap.Map(center=[-15, -60], zoom=2)
+        m = leafmap.Map(center=[-15, -60], zoom=8)
 
         # 南美洲國界 GeoJSON 路徑
         geojson_path = "custom.geo.json"
