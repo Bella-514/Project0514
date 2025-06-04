@@ -36,8 +36,8 @@ st.title("選擇日期區間")
 #if 'end_date' not in st.session_state:
 #    st.session_state['end_date'] = date.today()
 
-st.session_state['start_date'] = date(2024, 1, 1)
-st.session_state['end_date'] = date.today()
+st.session_state['start_date'] = date(2018, 1, 1)
+st.session_state['end_date'] = date(2020, 12, 31)
 
 
 # 日期選擇器
