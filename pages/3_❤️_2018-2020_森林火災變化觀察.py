@@ -43,12 +43,14 @@ gif_url = dataset.getVideoThumbURL({
     'format': 'gif'
 })
 
+# 顯示動畫
+st.markdown(f"### {year} 年火災變化 GIF")
+st.image(gif_url)
+
 # 顯示地圖 + ROI
 m = geemap.Map()
 m.centerObject(roi, 6)
 m.addLayer(roi, {"color": "gray"}, "分析區域")
 m.to_streamlit(height=400)
 
-# 顯示動畫
-st.markdown(f"### {year} 年火災變化 GIF")
-st.image(gif_url)
+
