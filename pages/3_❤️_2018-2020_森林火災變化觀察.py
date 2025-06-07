@@ -18,18 +18,16 @@ end_date = f"{year}-12-31"
 
 st.sidebar.write("📌 使用 MODIS 火災資料")
 
-# ROI：南美亞馬遜區域
-roi = ee.Geometry.BBox(-75, -15, -45, 5)
-
-# 顯示中心點座標與地名標籤
-centroid = roi.centroid()
-
 # 地圖聚焦到 ROI
 Map.centerObject(roi, zoom=7)
 
-# 或者想抓中心點但不使用 getInfo()
-centroid = roi.centroid()
-Map.add_ee_layer(centroid, {"color": "red"}, "中心點")
+# ROI：南美亞馬遜區域
+roi = ee.Geometry.BBox(-75, -15, -45, 5)
+
+roi = ee.Geometry.BBox(-59.67, -4.48, -56.74, -1.78)
+Map.centerObject(roi, zoom=7)
+Map.addLayer(roi, {"color": "gray"}, "預設 ROI")
+
 
 location_name = "亞馬遜雨林區域"
 st.markdown(f"📍 **觀測地點：{location_name}**　（經度：`{lon:.2f}`，緯度：`{lat:.2f}`）")
