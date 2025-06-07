@@ -28,7 +28,7 @@ image = (
 # MODIS IGBP 顏色與標籤（17 類）
 modis_palette = [
     "05450a", "086a10", "54a708", "78d203", "009900",
-    "c6b044", "dcd159", "dade48", "ff0000", "b6ff05",
+    "c6b044", "dcd159", "dade48", "fbff13", "ff0000",
     "27ff87", "c24f44", "a5a5a5", "ff6d4c", "69fff8",
     "f9ffa4", "1c0dff"
 ]
