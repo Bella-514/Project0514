@@ -67,8 +67,10 @@ classVis = {
 Map.addLayer(lc, classVis, "WorldCover 2021")
 
 # 加入滑動比較
-Map.split_map(left_layer=sentinel_img.visualize(**sentinel_vis),
-              right_layer=lc.visualize(**classVis))
+Map.split_map(
+    left_layer=(sentinel_img, sentinel_vis),
+    right_layer=(lc, classVis)
+)
 
 # 顯示在 Streamlit 畫面
 st.subheader("🆚 Sentinel-2 vs WorldCover 土地覆蓋滑動比較")
