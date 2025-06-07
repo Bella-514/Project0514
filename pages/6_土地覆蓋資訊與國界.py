@@ -16,7 +16,7 @@ my_Map = geemap.Map()
 region = ee.Geometry.BBox(-85, -55, -30, 15)  # 約略包含整個中南美洲
 
 # --- 左圖：ESA WorldCover 2021 ---
-left_map = geemap.Map(center=[-15, -60], zoom=4)
+left_layer = geemap.Map(center=[-15, -60], zoom=4)
 
 # MODIS MCD12Q1 土地覆蓋資料 (2019)
 year = 2019
@@ -39,7 +39,7 @@ modis_palette = [
 ]
 
 # 套用圖層
-left_map.addLayer(
+left_layer.addLayer(
     modis_img,
     {
         "min": 1,
@@ -69,7 +69,7 @@ modis_labels = {
     16: "未分類"
 }
 
-left_map.add_legend(
+left_layer.add_legend(
     title="MODIS 土地類型 (2019)",
     labels=list(modis_labels.values()),
     colors=modis_palette[1:17]
