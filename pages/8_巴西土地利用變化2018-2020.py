@@ -8,10 +8,10 @@ if not ee.data._initialized:
 
 # Streamlit 基本設定
 st.set_page_config(layout="wide")
-st.title("🌎 中南美洲土地利用變化觀察（2018–2020）")
+st.title("🌎 中南美洲土地利用變化觀察（2018–2022）")
 
 # 側欄：選擇年份
-year = st.sidebar.selectbox("📅 選擇觀察年份", [2018, 2019, 2020])
+year = st.sidebar.selectbox("📅 選擇觀察年份", [2018, 2019, 2020, 2021, 2022])
 
 # MODIS MCD12Q1 的年度資料識別格式
 dataset_id = f"MODIS/006/MCD12Q1"
@@ -55,7 +55,7 @@ modis_labels = {
 }
 
 # 顯示地圖
-Map = geemap.Map(center=[0, -75], zoom=4)
+Map = geemap.Map(center=[-10, -55], zoom=4)
 Map.addLayer(
     image,
     {
