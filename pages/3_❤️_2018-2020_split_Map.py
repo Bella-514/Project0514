@@ -1,7 +1,7 @@
 import streamlit as st
 import ee
 import pandas as pd
-import geemap.foliumap as geemap
+import leafmap.foliumap as leafmap  # ✅ 使用 leafmap 而非 geemap
 
 st.set_page_config(layout="wide")
 
@@ -26,11 +26,10 @@ df = pd.DataFrame(capital_data)
 selected_country = st.sidebar.selectbox("選擇國家聚焦", df["country"])
 coords = df[df["country"] == selected_country][["latitude", "longitude"]].values[0]
 
-# 建立地圖元件 (leafmap)
-Map = geemap.Map(center=[coords[0], coords[1]], zoom=6)
+# 建立 leafmap 地圖物件
+Map = leafmap.Map(center=[coords[0], coords[1]], zoom=6)
 
-# 使用者 ROI 選擇 (或預設方框)
-st.sidebar.markdown("🟩 請框選分析區域 (ROI)，或將使用預設區域")
+# 使用者 ROI 選擇（或使用預設）
 roi = Map.user_roi
 if roi is None:
     roi = ee.Geometry.BBox(-59.67, -4.48, -56.74, -1.78)
@@ -49,7 +48,6 @@ sentinel_img = (
     .select('B.*')
 )
 sentinel_vis = {'min': 100, 'max': 3500, 'bands': ['B11', 'B8', 'B3']}
-Map.addLayer(sentinel_img, sentinel_vis, f"Sentinel-2 ({years[0]}–{years[1]})")
 
 # WorldCover 土地覆蓋
 lc = ee.Image('ESA/WorldCover/v200/2021')
@@ -64,14 +62,13 @@ classVis = {
         'b4b4b4', 'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0'
     ]
 }
-Map.addLayer(lc, classVis, "WorldCover 2021")
 
-# 加入滑動比較
+# ✅ 使用 split_map 功能
 Map.split_map(
     left_layer=(sentinel_img, sentinel_vis),
     right_layer=(lc, classVis)
 )
 
-# 顯示在 Streamlit 畫面
+# 顯示在 Streamlit 畫面中
 st.subheader("🆚 Sentinel-2 vs WorldCover 土地覆蓋滑動比較")
 Map.to_streamlit(height=650)
