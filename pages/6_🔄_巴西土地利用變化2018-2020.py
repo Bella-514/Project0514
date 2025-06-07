@@ -9,6 +9,7 @@ if not ee.data._initialized:
 # Streamlit 基本設定
 st.set_page_config(layout="wide")
 st.title("🔄 中南美洲土地利用變化觀察")
+st.header("2018-2020")
 
 # 側欄：選擇年份
 year = st.sidebar.selectbox("📅 選擇觀察年份", [2018, 2019, 2020])
