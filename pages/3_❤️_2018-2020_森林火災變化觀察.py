@@ -24,7 +24,7 @@ roi = ee.Geometry.BBox(-75, -15, -45, 5)
 # ➕ 取得 ROI 中心點並顯示位置
 centroid = roi.centroid()
 lon, lat = centroid.coordinates().getInfo()
-st.markdown(f"📍 **目前分析中心位置：** 緯度 `{lat:.4f}`，經度 `{lon:.4f}`")
+st.markdown(f"📍 **目前分析中心位置：** '-8.424947581140511, -55.535429895218144`")
 
 # 抓取 MODIS 火災資料
 dataset = ee.ImageCollection('MODIS/006/MCD64A1') \
