@@ -64,7 +64,7 @@ classVis = {
         'b4b4b4', 'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0'
     ]
 }
-lc_layer = Map.add_ee_layer(lc, classVis, "WorldCover 2021", shown=False)
+Map.addLayer(lc, classVis, "WorldCover 2021")
 
 # 加入滑動比較
 Map.split_map(left_layer=sentinel_img.visualize(**sentinel_vis),
