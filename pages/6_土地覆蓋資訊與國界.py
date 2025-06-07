@@ -16,20 +16,64 @@ my_Map = geemap.Map()
 region = ee.Geometry.BBox(-85, -55, -30, 15)  # 約略包含整個中南美洲
 
 # --- 左圖：ESA WorldCover 2021 ---
-image_left = ee.Image('ESA/WorldCover/v200/2021')
-classValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
-remapValues = ee.List.sequence(0, 10)
-image_left = image_left.remap(classValues, remapValues, bandName='Map').rename('lc').toByte()
+left_map = geemap.Map(center=[-15, -60], zoom=4)
 
-vis_params_left = {
-    'min': 0,
-    'max': 10,
-    'palette': [
-        '006400', 'ffbb22', 'ffff4c', 'f096ff', 'fa0000',
-        'b4b4b4', 'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0'
-    ]
+# MODIS MCD12Q1 土地覆蓋資料 (2019)
+year = 2019
+brazil_roi = ee.Geometry.BBox(-74.0, -34.0, -34.0, 5.5)
+
+modis_img = (
+    ee.ImageCollection("MODIS/006/MCD12Q1")
+    .filter(ee.Filter.calendarRange(year, year, "year"))
+    .first()
+    .select("LC_Type1")
+    .clip(brazil_roi)
+)
+
+# MODIS 類別顏色（農田為紅色）
+modis_palette = [
+    "05450a", "086a10", "54a708", "78d203", "009900",   # 1–5 林
+    "c6b044", "dcd159", "dade48", "fbff13", "ff0000",   # 6–10 草、灌木、農田（紅）
+    "27ff87", "c24f44", "a5a5a5", "ff6d4c", "69fff8",   # 11–15 城市、裸地、水
+    "f9ffa4", "1c0dff"                                  # 16–17
+]
+
+# 套用圖層
+left_map.addLayer(
+    modis_img,
+    {
+        "min": 1,
+        "max": 16,
+        "palette": modis_palette[1:17]
+    },
+    "2019 MODIS 土地覆蓋"
+)
+
+# 圖例標籤（可選）
+modis_labels = {
+    1: "常綠針葉林",
+    2: "常綠闊葉林",
+    3: "落葉針葉林",
+    4: "落葉闊葉林",
+    5: "混合林",
+    6: "灌木叢",
+    7: "草地",
+    8: "稀疏植被",
+    9: "農田",
+    10: "永久濕地",
+    11: "城市",
+    12: "裸地",
+    13: "苔原",
+    14: "雪地",
+    15: "水體",
+    16: "未分類"
 }
-left_layer = geemap.ee_tile_layer(image_left, vis_params_left, 'WorldCover')
+
+left_map.add_legend(
+    title="MODIS 土地類型 (2019)",
+    labels=list(modis_labels.values()),
+    colors=modis_palette[1:17]
+)
 
 # --- 右圖：透明背景 + 疊加 GeoJSON 國界 ---
 empty_image = ee.Image(0).visualize(**{'palette': ['ffffff00']})
