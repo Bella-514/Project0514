@@ -3,44 +3,36 @@ import ee
 import geemap
 import os
 import tempfile
+import datetime
 
 st.set_page_config(layout="wide")
-st.title("🔥 2018-2020 年森林火災變化觀察")
+st.title("🔥 2018-2020 年森林火災變化觀察（含時間標籤）")
 
-# 初始化 Earth Engine
 if not ee.data._initialized:
     ee.Initialize()
 
-# 側欄參數
+# 使用者選擇年份
 st.sidebar.title("📅 選擇觀察年份")
 year = st.sidebar.slider("選擇年份", 2018, 2020, 2018)
-start_date = f"{year}-01-01"
-end_date = f"{year}-12-31"
 
-st.sidebar.write("📌 使用 MODIS 火災資料")
-roi = ee.Geometry.BBox(-75, -15, -45, 5)  # 南美地區（巴西亞馬遜）
+# ROI
+roi = ee.Geometry.BBox(-75, -15, -45, 5)
 
-# 抓取 MODIS 火災資料
-dataset = (
-    ee.ImageCollection('MODIS/006/MCD64A1')
-    .filterBounds(roi)
-    .filterDate(start_date, end_date)
-    .select('BurnDate')
-)
+# 建立每月火災影像集合
+def create_monthly_burn_image(month):
+    start = ee.Date.fromYMD(year, month, 1)
+    end = start.advance(1, 'month')
+    image = ee.ImageCollection('MODIS/006/MCD64A1') \
+        .filterDate(start, end) \
+        .select('BurnDate') \
+        .mean() \
+        .set({'system:time_start': start.millis()})  # 必須加上這個才會有時間標籤
+    return image
 
-# 設定 GIF 視覺參數
-vis_params = {
-    'bands': ['BurnDate'],
-    'min': 30,
-    'max': 365,
-    'palette': ['black', 'orange', 'red'],
-}
+months = ee.List.sequence(1, 12)
+monthly_images = ee.ImageCollection(months.map(create_monthly_burn_image))
 
-# 建立暫存資料夾
-temp_dir = tempfile.TemporaryDirectory()
-gif_path = os.path.join(temp_dir.name, f"fire_{year}.gif")
-
-# 設定影片參數
+# 設定 GIF 視覺與參數
 video_args = {
     'dimensions': 768,
     'region': roi,
@@ -49,20 +41,24 @@ video_args = {
     'min': 30,
     'max': 365,
     'palette': ['black', 'orange', 'red'],
-    'label': 'YYYY-MM-dd',
+    'label': 'YYYY-MM',
     'labelPosition': 'top-right',
     'fontSize': 16,
     'fontColor': 'white',
 }
 
-# 下載帶時間標籤的 GIF
+# 暫存檔路徑
+temp_dir = tempfile.TemporaryDirectory()
+gif_path = os.path.join(temp_dir.name, f"fire_{year}.gif")
+
+# 建立動畫 GIF
 with st.spinner("生成火災動畫中，請稍候..."):
-    geemap.download_ee_video(dataset, video_args, gif_path)
+    geemap.download_ee_video(monthly_images, video_args, gif_path)
 
 # 顯示動畫
 st.markdown(f"### 🎞️ {year} 年火災變化動畫（含時間標籤）")
 st.image(gif_path)
 
-# 顯示靜態區域對照圖
+# 顯示參考區域圖
 st.markdown("### 🖼️ 區域對照地圖")
 st.image("定位區域圖示.jpg", caption="分析區域: 南美地區（巴西亞馬遜）", use_container_width=True)
