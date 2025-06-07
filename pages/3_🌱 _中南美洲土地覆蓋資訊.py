@@ -8,7 +8,7 @@ if not ee.data._initialized:
 
 # 頁面設定
 st.set_page_config(layout="wide")
-st.title("🌱 2019 年巴西土地覆蓋觀察（MODIS MCD12Q1）")
+st.title("🌱 2019 年巴西土地覆蓋觀察")
 
 # 指定年份
 year = 2019
