@@ -1,53 +1,78 @@
-import ee
-import geemap.foliumap as geemap  # 或改成 leafmap 若你使用的是 leafmap
 import streamlit as st
+import ee
+import geemap.foliumap as geemap
 
 # 初始化 Earth Engine
 if not ee.data._initialized:
     ee.Initialize()
 
-# 建立地圖物件
-my_Map = geemap.Map(center=[-10, -55], zoom=4)
+# 頁面設定
+st.set_page_config(layout="wide")
+st.title("🌱 2019 年巴西土地覆蓋觀察（MODIS MCD12Q1）")
 
-# 定義區域（亞馬遜附近）
-my_point = ee.Geometry.BBox(-63.0, -15.0, -47.0, -2.0)
+# 指定年份
+year = 2019
 
-# 載入 Sentinel-2 影像
-my_img = (
-    ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-    .filterBounds(my_point)
-    .filterDate('2019-01-01', '2019-12-31')
-    .sort('CLOUDY_PIXEL_PERCENTAGE')
+# ROI：巴西國土範圍（近似 BBox）
+brazil_roi = ee.Geometry.BBox(-74.0, -34.0, -34.0, 5.5)
+
+# 載入 MODIS MCD12Q1 資料
+image = (
+    ee.ImageCollection("MODIS/006/MCD12Q1")
+    .filter(ee.Filter.calendarRange(year, year, "year"))
     .first()
-    .select('B.*')
+    .select("LC_Type1")
+    .clip(brazil_roi)
 )
 
-# 顯示 Sentinel-2
-vis_params = {'min': 100, 'max': 3500, 'bands': ['B11', 'B8', 'B3']}
-my_Map.addLayer(my_img, vis_params, "Sentinel-2")
-
-# 載入 ESA WorldCover 土地覆蓋資料
-my_lc = ee.Image('ESA/WorldCover/v200/2021')
-
-# 重新分類土地覆蓋類別（Optional）
-classValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
-remapValues = ee.List.sequence(0, 10)
-label = 'lc'
-my_lc = my_lc.remap(classValues, remapValues, bandName='Map').rename(label).toByte()
-
-# 顯示 WorldCover 圖層
-classVis = {
-    'min': 0,
-    'max': 10,
-    'palette': [
-        '006400', 'ffbb22', 'ffff4c', 'f096ff', 'fa0000',
-        'b4b4b4', 'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0'
-    ]
+# MODIS IGBP 顏色與標籤（17 類）
+modis_palette = [
+    "05450a", "086a10", "54a708", "78d203", "009900",
+    "c6b044", "dcd159", "dade48", "ff0000", "b6ff05",
+    "27ff87", "c24f44", "a5a5a5", "ff6d4c", "69fff8",
+    "f9ffa4", "1c0dff"
+]
+modis_labels = {
+    0: "無資料",
+    1: "常綠針葉林",
+    2: "常綠闊葉林",
+    3: "落葉針葉林",
+    4: "落葉闊葉林",
+    5: "混合林",
+    6: "灌木叢",
+    7: "草地",
+    8: "稀疏植被",
+    9: "農田",
+    10: "永久濕地",
+    11: "城市",
+    12: "裸地",
+    13: "苔原",
+    14: "雪地",
+    15: "水體",
+    16: "未分類",
 }
-my_Map.addLayer(my_lc, classVis, "ESA WorldCover 10m v200")
 
-# 加入圖例
-my_Map.add_legend(title='ESA Land Cover Type', builtin_legend='ESA_WorldCover')
+# 顯示地圖
+Map = geemap.Map(center=[-10, -55], zoom=4)
+Map.addLayer(
+    image,
+    {
+        "min": 1,
+        "max": 16,
+        "palette": modis_palette[1:17]
+    },
+    f"2019 MODIS 土地覆蓋"
+)
 
-# 顯示地圖於 Streamlit
-my_Map.to_streamlit(width=1000, height=600)
+# 顯示圖例
+Map.add_legend(
+    title="MODIS 土地類型",
+    labels=list(modis_labels.values())[1:17],
+    colors=modis_palette[1:17]
+)
+Map.to_streamlit(height=600)
+
+# 顯示分類說明
+st.markdown("### 📋 土地覆蓋類別（IGBP 分類）")
+for k, v in modis_labels.items():
+    st.markdown(f"- **{k}**: {v}")
