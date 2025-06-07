@@ -45,16 +45,21 @@ video_args = {
     'fontColor': 'white',
 }
 
-# 建立 GIF
-temp_dir = tempfile.TemporaryDirectory()
-gif_path = os.path.join(temp_dir.name, f"fire_{year}.gif")
+# 建立儲存資料夾
+output_dir = "./tmp"
+os.makedirs(output_dir, exist_ok=True)
+gif_path = os.path.join(output_dir, f"fire_{year}.gif")
 
 with st.spinner("正在生成火災動畫..."):
     geemap.download_ee_video(fire_images, video_args, gif_path)
 
-# 顯示動畫
-st.markdown(f"### 🎞️ {year} 年 7~8 月火災動畫（每日，含時間標籤）")
-st.image(gif_path)
+# 檢查檔案存在再顯示
+if os.path.exists(gif_path):
+    st.markdown(f"### 🎞️ {year} 年火災動畫（每日，含時間標籤）")
+    st.image(gif_path)
+else:
+    st.error("❌ 無法生成 GIF，請檢查資料是否存在或資料集是否過小。")
+
 
 # 顯示定位圖
 st.markdown("### 📍 區域對照地圖")
