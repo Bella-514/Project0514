@@ -7,7 +7,7 @@ if not ee.data._initialized:
     ee.Initialize()
 
 st.set_page_config(layout="wide")
-st.title("🌍 中南美洲：土地覆蓋 vs 國界（分割視圖）")
+st.title("🌍 中南美洲：土地覆蓋 vs 國界")
 
 # 主地圖
 my_Map = geemap.Map()
