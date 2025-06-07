@@ -59,16 +59,18 @@ Map = geemap.Map(center=[0, -75], zoom=4)
 Map.addLayer(
     image,
     {
-        "min": 0,
+        "min": 1,
         "max": 16,
-        "palette": modis_palette
+        "palette": modis_palette[1:17]
     },
     f"{year} 土地利用（MODIS）"
 )
 
-# 加入圖例
-Map.add_legend(title="MODIS 土地類別", labels=modis_labels, colors=modis_palette)
+# 準備圖例資料（去除 index 0）
+label_list = list(modis_labels.values())[1:17]
+color_list = modis_palette[1:17]
 
+Map.add_legend(title="MODIS 土地類別", labels=label_list, colors=color_list)
 Map.to_streamlit(height=600)
 
 # 顯示圖例說明
