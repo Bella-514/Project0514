@@ -23,7 +23,14 @@ roi = ee.Geometry.BBox(-75, -15, -45, 5)
 
 # 顯示中心點座標與地名標籤
 centroid = roi.centroid()
-lon, lat = centroid.coordinates().getInfo()
+
+# 地圖聚焦到 ROI
+Map.centerObject(roi, zoom=7)
+
+# 或者想抓中心點但不使用 getInfo()
+centroid = roi.centroid()
+Map.add_ee_layer(centroid, {"color": "red"}, "中心點")
+
 location_name = "亞馬遜雨林區域"
 st.markdown(f"📍 **觀測地點：{location_name}**　（經度：`{lon:.2f}`，緯度：`{lat:.2f}`）")
 
