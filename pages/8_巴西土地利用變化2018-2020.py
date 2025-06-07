@@ -26,6 +26,41 @@ image = ee.ImageCollection(dataset_id) \
     .select('LC_Type1') \
     .clip(roi)
 
+# ---- 計算耕地與雨林面積 ----
+# MODIS 的每像素面積（單位：平方公里）
+pixel_area_km2 = 0.25
+
+# 建立耕地與雨林的掩膜
+cropland_mask = image.eq(9)
+forest_mask = image.eq(2)
+
+# 計算每種類別的像素總數
+cropland_stats = cropland_mask.reduceRegion(
+    reducer=ee.Reducer.sum(),
+    geometry=roi,
+    scale=500,
+    maxPixels=1e13
+)
+
+forest_stats = forest_mask.reduceRegion(
+    reducer=ee.Reducer.sum(),
+    geometry=roi,
+    scale=500,
+    maxPixels=1e13
+)
+
+# 取回像素數並換算面積
+cropland_pixels = cropland_stats.getNumber('LC_Type1')
+forest_pixels = forest_stats.getNumber('LC_Type1')
+
+cropland_area_km2 = cropland_pixels.multiply(pixel_area_km2)
+forest_area_km2 = forest_pixels.multiply(pixel_area_km2)
+
+# 將面積數據取出為 Python 數值
+cropland_area = cropland_area_km2.getInfo()
+forest_area = forest_area_km2.getInfo()
+
+
 # MODIS IGBP 類別顏色與標籤（共17類）
 modis_palette = [
     "05450a", "086a10", "54a708", "78d203", "009900",
@@ -72,6 +107,12 @@ color_list = modis_palette[1:17]
 
 Map.add_legend(title="MODIS 土地類別", labels=label_list, colors=color_list)
 Map.to_streamlit(height=600)
+
+# 顯示面積資訊
+st.markdown(f"### 📊 {year} 年面積統計")
+st.write(f"🌾 耕地面積：約 **{cropland_area:,.0f}** 平方公里")
+st.write(f"🌳 雨林（常綠闊葉林）面積：約 **{forest_area:,.0f}** 平方公里")
+
 
 # 顯示圖例說明
 st.markdown(f"### 📋 {year} 年土地類型對照表")
