@@ -16,7 +16,7 @@ my_point = ee.Geometry.BBox(-63.0, -15.0, -47.0, -2.0)
 my_img = (
     ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
     .filterBounds(my_point)
-    .filterDate('2018-01-01', '2024-12-31')
+    .filterDate('2019-01-01', '2019-12-31')
     .sort('CLOUDY_PIXEL_PERCENTAGE')
     .first()
     .select('B.*')
