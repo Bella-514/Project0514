@@ -1,7 +1,9 @@
 import streamlit as st
 import ee
-import leafmap.foliumap as leafmap
 import pandas as pd
+import geemap.foliumap as geemap
+
+Map = geemap.Map(center=[coords[0], coords[1]], zoom=6)
 
 st.set_page_config(layout="wide")
 
