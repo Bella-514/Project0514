@@ -14,7 +14,7 @@ logo = "https://emojiisland.com/cdn/shop/products/Earth_Globe_Americas_Emoji_gra
 st.sidebar.image(logo)
 
 # 主標題
-st.title("South America Marker Cluster")
+st.title("🚩 南美洲國家介紹")
 
 # 建立地圖，南美洲中心座標
 m = leafmap.Map(center=[-15, -60], zoom=4)
