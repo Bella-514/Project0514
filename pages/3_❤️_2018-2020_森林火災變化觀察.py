@@ -53,4 +53,6 @@ m.centerObject(roi, 6)
 m.addLayer(roi, {"color": "gray"}, "分析區域")
 m.to_streamlit(height=400)
 
-
+# === 顯示 JPG 圖片 ===
+st.markdown("### 🖼️ 區域對照地圖")
+st.image("定位區域圖示.jpg", caption="分析區域示意圖", use_column_width=True) 
