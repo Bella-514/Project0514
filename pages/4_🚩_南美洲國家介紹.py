@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 
 # Sidebar 設定
 markdown = """
-中南美洲國家
+🚩 中南美洲國家
 """
 st.sidebar.title("About")
 st.sidebar.info(markdown)
