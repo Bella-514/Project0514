@@ -72,7 +72,3 @@ Map.add_legend(
 )
 Map.to_streamlit(height=600)
 
-# 顯示分類說明
-st.markdown("### 📋 土地覆蓋類別（IGBP 分類）")
-for k, v in modis_labels.items():
-    st.markdown(f"- **{k}**: {v}")
