@@ -16,7 +16,7 @@ credentials = service_account.Credentials.from_service_account_info(
 ee.Initialize(credentials)
 
 
-st.title("📊 子頁面：2018–2020 森林火災資料")
+st.title("據選擇時間顯示2018–2020 森林火災資料")
 
 # 讀取 2018–2020 的影像資料集
 dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1').filterDate('2018-01-01', '2020-12-31')
