@@ -3,8 +3,6 @@ import ee
 import pandas as pd
 import geemap.foliumap as geemap
 
-Map = geemap.Map(center=[coords[0], coords[1]], zoom=6)
-
 st.set_page_config(layout="wide")
 
 # 初始化 Earth Engine
@@ -29,7 +27,7 @@ selected_country = st.sidebar.selectbox("選擇國家聚焦", df["country"])
 coords = df[df["country"] == selected_country][["latitude", "longitude"]].values[0]
 
 # 建立地圖元件 (leafmap)
-Map = leafmap.Map(center=[coords[0], coords[1]], zoom=6)
+Map = geemap.Map(center=[coords[0], coords[1]], zoom=6)
 
 # 使用者 ROI 選擇 (或預設方框)
 st.sidebar.markdown("🟩 請框選分析區域 (ROI)，或將使用預設區域")
