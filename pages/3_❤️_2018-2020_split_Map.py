@@ -1,74 +1,54 @@
 import streamlit as st
 import ee
-import pandas as pd
-import leafmap.foliumap as leafmap
+import geemap
+import datetime
 
 st.set_page_config(layout="wide")
+st.title("🔥 2018-2020 年森林火災變化觀察")
 
 # 初始化 Earth Engine
 if not ee.data._initialized:
     ee.Initialize()
 
-# 側邊欄參數
-st.sidebar.title("🔧 選擇參數")
-years = st.sidebar.slider("選擇影像年份區間", 2018, 2020, (2018, 2020))
-start_date = f"{years[0]}-01-01"
-end_date = f"{years[1]}-12-31"
+# 側欄參數
+st.sidebar.title("📅 選擇觀察年份")
+year = st.sidebar.slider("選擇年份", 2018, 2020, 2018)
+start_date = f"{year}-01-01"
+end_date = f"{year}-12-31"
 
-# 國家選擇下拉選單
-capital_data = [
-    {"country": "Brazil", "capital": "Brasilia", "latitude": -15.793889, "longitude": -47.882778},
-    {"country": "Peru", "capital": "Lima", "latitude": -12.0464, "longitude": -77.0428},
-    {"country": "Colombia", "capital": "Bogotá", "latitude": 4.7110, "longitude": -74.0721},
-    {"country": "Bolivia", "capital": "Sucre", "latitude": -19.0196, "longitude": -65.2619},
-]
-df = pd.DataFrame(capital_data)
-selected_country = st.sidebar.selectbox("選擇國家聚焦", df["country"])
-coords = df[df["country"] == selected_country][["latitude", "longitude"]].values[0]
+st.sidebar.write("📌 使用 MODIS 火災資料")
+roi = ee.Geometry.BBox(-75, -15, -45, 5)  # 南美地區（巴西亞馬遜）
 
-# 建立地圖
-Map = leafmap.Map(center=[coords[0], coords[1]], zoom=6)
+# 抓取 MODIS 火災資料
+dataset = ee.ImageCollection('MODIS/006/MCD64A1') \
+    .filterBounds(roi) \
+    .filterDate(start_date, end_date) \
+    .select('BurnDate')
 
-# 處理 ROI 區域
-roi = Map.user_roi
-if roi is None:
-    roi = ee.Geometry.BBox(-59.67, -4.48, -56.74, -1.78)
-
-# 在 ROI 畫灰色方框 (改用 add_ee_layer)
-Map.add_ee_layer(roi, {"color": "gray"}, "ROI 區域")
-Map.set_center(coords[1], coords[0], 7)
-
-# Sentinel-2 影像
-sentinel_img = (
-    ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-    .filterBounds(roi)
-    .filterDate(start_date, end_date)
-    .sort('CLOUDY_PIXEL_PERCENTAGE')
-    .first()
-    .select('B.*')
-)
-sentinel_vis = {'min': 100, 'max': 3500, 'bands': ['B11', 'B8', 'B3']}
-
-# WorldCover 資料
-lc = ee.Image('ESA/WorldCover/v200/2021')
-classValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
-remapValues = ee.List.sequence(0, 10)
-lc = lc.remap(classValues, remapValues, bandName='Map').rename('lc').toByte()
-classVis = {
-    'min': 0,
-    'max': 10,
-    'palette': [
-        '006400', 'ffbb22', 'ffff4c', 'f096ff', 'fa0000',
-        'b4b4b4', 'f0f0f0', '0064c8', '0096a0', '00cf75', 'fae6a0'
-    ]
+# 組合成動畫 GIF
+vis_params = {
+    'min': 30,
+    'max': 365,
+    'palette': ['black', 'orange', 'red']
 }
 
-# 使用 split map 功能互動比較
-Map.split_map(
-    left_layer=(sentinel_img, sentinel_vis),
-    right_layer=(lc, classVis)
-)
+gif_url = dataset.getVideoThumbURL({
+    'dimensions': 768,
+    'region': roi,
+    'framesPerSecond': 2,
+    'bands': ['BurnDate'],
+    'min': 30,
+    'max': 365,
+    'palette': ['black', 'orange', 'red'],
+    'format': 'gif'
+})
 
-# 顯示地圖在 Streamlit 中
-st.subheader("🆚 Sentinel-2 vs WorldCover 土地覆蓋滑動比較")
-Map.to_streamlit(height=650)
+# 顯示地圖 + ROI
+m = geemap.Map()
+m.centerObject(roi, 6)
+m.addLayer(roi, {"color": "gray"}, "分析區域")
+m.to_streamlit(height=400)
+
+# 顯示動畫
+st.markdown(f"### {year} 年火災變化 GIF")
+st.image(gif_url)
