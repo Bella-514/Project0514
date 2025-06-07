@@ -40,4 +40,4 @@ gif_url = dataset.getVideoThumbURL({
     'bands': ['BurnDate'],
     'min': 30,
     'max': 365,
-    'palette': ['black', 'orange', 'red']()
+    'palette': ['black', 'orange', 'red']
