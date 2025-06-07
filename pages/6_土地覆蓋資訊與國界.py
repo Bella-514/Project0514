@@ -82,8 +82,12 @@ right_layer = geemap.ee_tile_layer(empty_image, {}, 'Transparent Layer')
 # 地圖以中南美洲為中心
 my_Map.centerObject(region, 4)
 
-# 設定分割地圖
-my_Map.split_map(left_layer, right_layer)
+# 從 left_layer 和 right_layer 取出圖層（通常是第 0 個圖層）
+left_tile = left_layer.layers[-1]  # 或 left_layer.ee_layers[0]['ee_object']
+right_tile = right_layer
+
+my_Map.split_map(left_tile, right_tile)
+
 
 # 加入國界 GeoJSON（請確認 custom.geo.json 存在）
 my_Map.add_geojson("custom.geo.json", layer_name="South America Borders")
