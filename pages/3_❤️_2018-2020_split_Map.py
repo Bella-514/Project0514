@@ -49,7 +49,7 @@ sentinel_img = (
     .select('B.*')
 )
 sentinel_vis = {'min': 100, 'max': 3500, 'bands': ['B11', 'B8', 'B3']}
-sentinel_layer = Map.add_ee_layer(sentinel_img, sentinel_vis, f"Sentinel-2 ({years[0]}–{years[1]})", shown=False)
+Map.addLayer(sentinel_img, sentinel_vis, f"Sentinel-2 ({years[0]}–{years[1]})")
 
 # WorldCover 土地覆蓋
 lc = ee.Image('ESA/WorldCover/v200/2021')
