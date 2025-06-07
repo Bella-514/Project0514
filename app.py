@@ -28,7 +28,7 @@ st.session_state['end_date'] = end_date
 st.success(f"目前選擇的日期區間為：{start_date} 到 {end_date}")
 
 
-st.title("2019亞馬遜森林大火")
+st.header("以2019亞馬遜森林大火為例")
 
 with st.expander("展示gif檔"):
     st.image("Amazon_Fire_2019.gif")
