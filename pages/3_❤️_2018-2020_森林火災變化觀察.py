@@ -17,14 +17,7 @@ start_date = f"{year}-01-01"
 end_date = f"{year}-12-31"
 
 st.sidebar.write("📌 使用 MODIS 火災資料")
-
-# ROI：亞馬遜某區塊（可自訂）
-roi = ee.Geometry.BBox(-75, -15, -45, 5)
-
-# ➕ 取得 ROI 中心點並顯示位置
-centroid = roi.centroid()
-lon, lat = centroid.coordinates().getInfo()
-st.markdown(f"📍 **目前分析中心位置：** '-8.424947581140511, -55.535429895218144`")
+roi = ee.Geometry.BBox(-75, -15, -45, 5)  # 南美地區（巴西亞馬遜）
 
 # 抓取 MODIS 火災資料
 dataset = ee.ImageCollection('MODIS/006/MCD64A1') \
@@ -33,6 +26,12 @@ dataset = ee.ImageCollection('MODIS/006/MCD64A1') \
     .select('BurnDate')
 
 # 組合成動畫 GIF
+vis_params = {
+    'min': 30,
+    'max': 365,
+    'palette': ['black', 'orange', 'red']
+}
+
 gif_url = dataset.getVideoThumbURL({
     'dimensions': 768,
     'region': roi,
@@ -40,4 +39,16 @@ gif_url = dataset.getVideoThumbURL({
     'bands': ['BurnDate'],
     'min': 30,
     'max': 365,
-    'palette': ['black', 'orange', 'red']
+    'palette': ['black', 'orange', 'red'],
+    'format': 'gif'
+})
+
+# 顯示地圖 + ROI
+m = geemap.Map()
+m.centerObject(roi, 6)
+m.addLayer(roi, {"color": "gray"}, "分析區域")
+m.to_streamlit(height=400)
+
+# 顯示動畫
+st.markdown(f"### {year} 年火災變化 GIF")
+st.image(gif_url)
