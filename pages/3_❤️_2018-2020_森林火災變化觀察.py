@@ -49,4 +49,4 @@ st.image(gif_url)
 
 # === 顯示 JPG 圖片 ===
 st.markdown("### 🖼️ 區域對照地圖")
-st.image("定位區域圖示.jpg", caption="分析區域示意圖", use_container_width=True) 
+st.image("定位區域圖示.jpg", caption="分析區域:南美地區（巴西亞馬遜）", use_container_width=True) 
