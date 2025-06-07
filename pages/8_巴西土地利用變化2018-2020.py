@@ -114,7 +114,4 @@ st.write(f"🌾 耕地面積：約 **{cropland_area:,.0f}** 平方公里")
 st.write(f"🌳 雨林（常綠闊葉林）面積：約 **{forest_area:,.0f}** 平方公里")
 
 
-# 顯示圖例說明
-st.markdown(f"### 📋 {year} 年土地類型對照表")
-for code, label in modis_labels.items():
-    st.write(f"- **{code}**: {label}")
+
